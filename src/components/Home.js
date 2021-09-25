@@ -21,7 +21,9 @@ const Home = (props) => {
     return (
         <div className="container pt-5">
             <div className="row">
-                <div className="col-sm-3"></div>
+                <div className="col-sm-3">
+                    <img src="/logo.png" alt="capacitate-logo" />
+                </div>
                 <div className="col-sm-6" min-height="50vh">
                     <h1>
                         CURSOS

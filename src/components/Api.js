@@ -14,3 +14,10 @@ export const allCursos = () => {
             return response.data
         } )
 }
+
+export const solicitarCupo = (id) => {
+    return axios.post(`${API_URL}/api/curso/${id}`)
+        .then(response => {
+            return response.data
+        })
+}

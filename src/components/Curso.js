@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { cursoById } from './Api.js';
+import { cursoById, solicitarCupo } from './Api.js';
 import { useParams } from 'react-router-dom';
 
 const Curso = (props) => {
@@ -19,8 +19,6 @@ const Curso = (props) => {
     const getCursoData = () => {
         cursoById(id)
             .then(data => {
-                console.log("Here here")
-                console.log(data)
                 setCursoData({...cursoData,
                     nombre: data.nombre,
                     cupos: data.cupos,
@@ -35,14 +33,22 @@ const Curso = (props) => {
             })
     }
 
-    //const handleSolicitarCupo = () =>
+    const handleSolicitarCupo = () => {
+        solicitarCupo(id)
+            .then(data => {
+                setCursoData({
+                    ...cursoData,
+                    cuposReservados: data.reservas.length
+                })
+            })
+    }
 
     return (
         <div className="container">
             <h1>{cursoData.nombre}</h1>
             <p>{cursoData.descripcion}</p>
             <h3> {cursoData.cupos - cursoData.cuposReservados} cupos disponibles </h3>
-            <button type="button" class="btn btn-primary"> Solicitar Cupo </button>
+            <button type="button" class="btn btn-primary" onClick={handleSolicitarCupo}> Solicitar Cupo </button>
         </div>
     )
 
