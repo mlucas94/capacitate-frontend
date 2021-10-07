@@ -20,4 +20,8 @@ export const solicitarCupo = (id) => {
         .then(response => {
             return response.data
         })
+        .catch(err => {
+            console.log("ERROR")
+            return err.response.data
+        })
 }

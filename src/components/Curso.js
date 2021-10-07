@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { cursoById, solicitarCupo } from './Api.js';
 import { useParams } from 'react-router-dom';
+import Swal from 'sweetalert2'
 
 const Curso = (props) => {
     const [cursoData, setCursoData] = useState({
@@ -36,9 +37,30 @@ const Curso = (props) => {
     const handleSolicitarCupo = () => {
         solicitarCupo(id)
             .then(data => {
-                setCursoData({
-                    ...cursoData,
-                    cuposReservados: data.reservas.length
+                if(data.reservas) {
+                    setCursoData({
+                        ...cursoData,
+                        cuposReservados: data.reservas.length
+                    })
+                } else {
+                    setCursoData({
+                        ...cursoData,
+                        cuposReservados: cursoData.cupos
+                    })
+                    Swal.fire({
+                        text: data,
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                Swal.fire({
+                    title: "Error de conexión",
+                    text: "Por favor vuelva a intentar mas tarde",
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
                 })
             })
     }
