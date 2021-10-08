@@ -21,7 +21,7 @@ export const solicitarCupo = (id) => {
             return response.data
         })
         .catch(err => {
-            console.log("ERROR")
+            console.log(err)
             return err.response.data
         })
 }
