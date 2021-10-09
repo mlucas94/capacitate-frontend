@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { cursoById, solicitarCupo } from './Api.js';
+import { cursoById, solicitarCupo, yaEstaInscripto, cancelarCupo } from './Api.js';
 import { useParams } from 'react-router-dom';
 import Swal from 'sweetalert2'
 
@@ -10,11 +10,14 @@ const Curso = (props) => {
         descripcion: "",
         cuposReservados: 0,
     });
+    const [usuarioInscripto, setUsuarioInscripto] = useState(false)
 
     let { id } = useParams();
+    let dniTest = "12345"
 
     useEffect(() => {
         getCursoData();
+        getEstaInscripto();
     }, [])
 
     const getCursoData = () => {
@@ -39,14 +42,25 @@ const Curso = (props) => {
             })
     }
 
+    const getEstaInscripto = () => {
+        yaEstaInscripto(id, { dni : dniTest })
+        .then(data => {
+            setUsuarioInscripto(data)
+        })
+        .catch(error => {
+            return
+        })
+    }
+
     const handleSolicitarCupo = () => {
-        solicitarCupo(id)
+        solicitarCupo(id, { dni: dniTest })
             .then(data => {
                 if(data.reservas) {
                     setCursoData({
                         ...cursoData,
                         cuposReservados: data.reservas.length
                     })
+                    getEstaInscripto();
                 } else {
                     //setCursoData({
                     //    ...cursoData,
@@ -63,17 +77,39 @@ const Curso = (props) => {
                 console.log(err)
                 Swal.fire({
                     title: "Error de conexión",
-                    text: "Por favor vuelva a intentar mas tarde",
+                    text: "Por favor vuelva a intentar mas tarde.",
                     icon: 'error',
                     confirmButtonText: 'Aceptar'
                 })
             })
     }
 
-    const tieneCupo = () => {
-        return true
-        //cambiar cuposreservados para que tenga la lista de dnis? y preguntar si esta incluido el propio
-        //Alt. 2 metodos nuevos: uno actualiza solamente cuposReservados, el otro hace la consulta al back sobre el usuario
+    const handleCancelarCupo = () => {
+        cancelarCupo(id, { dni: dniTest })
+        .then(data => {
+            if(data.reservas) {
+                setCursoData({
+                    ...cursoData,
+                    cuposReservados: data.reservas.length
+                })
+                getEstaInscripto();
+            } else {
+                Swal.fire({
+                    text: data,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            Swal.fire({
+                title: "Error de conexión",
+                text: "Por favor vuelva a intentar mas tarde.",
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            })
+        })
     }
 
     return (
@@ -83,9 +119,9 @@ const Curso = (props) => {
             <h3> {cursoData.cupos - cursoData.cuposReservados} cupos disponibles </h3>
             <div>
                 {
-                    tieneCupo() ? 
+                    !usuarioInscripto ? 
                         <button type="button" class="btn btn-primary" onClick={handleSolicitarCupo}> Solicitar Cupo </button>
-                        : <button type="button" class="btn btn-danger" onClick={handleSolicitarCupo}> Cancelar Cupo </button>
+                        : <button type="button" class="btn btn-danger" onClick={handleCancelarCupo}> Cancelar Cupo </button>
                 }
             </div>
         </div>

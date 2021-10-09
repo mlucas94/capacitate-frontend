@@ -15,8 +15,8 @@ export const allCursos = () => {
         } )
 }
 
-export const solicitarCupo = (id) => {
-    return axios.post(`${API_URL}/api/curso/${id}`)
+export const solicitarCupo = (id, usuario) => {
+    return axios.post(`${API_URL}/api/curso/${id}`, usuario)
         .then(response => {
             return response.data
         })
@@ -24,4 +24,26 @@ export const solicitarCupo = (id) => {
             console.log(err)
             return err.response.data
         })
+}
+
+export const cancelarCupo = (id, usuario) => {
+    return axios.post(`${API_URL}/api/curso/${id}/cancelar`, usuario)
+    .then(response => {
+        return response.data
+    })
+    .catch(err => {
+        console.log(err)
+        return err.response.data
+    })
+}
+
+export const yaEstaInscripto = (id, usuario) => {
+    return axios.post(`${API_URL}/api/curso/${id}/inscripto`, usuario)
+    .then(response => {
+        return response.data
+    })
+    .catch(err => {
+        console.log(err)
+        return err.response.data
+    })
 }
